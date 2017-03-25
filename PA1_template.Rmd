@@ -10,7 +10,7 @@ output:
 
 The following code is needed to load the activity.csv dataset.
 
-```{r loaddata}
+```{r loaddata, echo=TRUE}
 activity <- read.csv("activity.csv")
 activity$date <- as.Date(as.character(activity$date), "%Y-%m-%d")
 dailystep <- aggregate(activity$steps, by=list(activity$date), FUN=sum)
@@ -25,7 +25,7 @@ names(intervalstep) <- c("interval", "steps")
 The following shows the histogram of the average total number of steps taken 
 per day.
 
-```{r histogram, echo=FALSE}
+```{r histogram, echo=TRUE}
 hist(dailystep$steps, xlab = "No. of Steps", ylab = "Number of days",
      main = "Histogram of no. of steps taken per day", ylim = c(0, 30))
 meanstep <- round(mean(dailystep$steps, na.rm = TRUE), digits=2)
@@ -42,7 +42,7 @@ and the median of total number of steps taken per day is
 The following diagram shows a line plot of the 5-minute interval (x-axis) and 
 the average number of steps taken, averaged across all days (y-axis).
 
-```{r lineplot, echo=FALSE}
+```{r lineplot, echo=TRUE}
 library("ggplot2")
 g <- ggplot(intervalstep, aes(interval, steps))
 g + geom_line(color="blue") + labs(x = "Interval") + labs(y = "Number of steps")
@@ -64,7 +64,7 @@ the missing values in the dataset.
 To create the new dataset, I ran the following code. The first 20 lines of the 
 result is shown at the second block.
 
-```{r fillNAvalues}
+```{r fillNAvalues, echo=TRUE}
 missingactivity <- activity[is.na(activity$steps),]
 nonmissingactivity <- activity[!is.na(activity$steps),]
 medianintervalstep <- aggregate(activity$steps, by=list(activity$interval), 
@@ -83,7 +83,7 @@ values in the dataset after filling missing values.
 The following shows the histogram of the average total number of steps taken 
 per day (with missing value being filled).
 
-```{r filledhistogram, echo=FALSE}
+```{r filledhistogram, echo=TRUE}
 filleddailystep <- aggregate(filledactivity$steps, by=list(activity$date), 
                              FUN=sum)
 names(filleddailystep) <- c("date", "steps")
@@ -107,7 +107,7 @@ and the median of total number of steps taken per day changes from
 The new factor variable **week** is created, the following shows the first 6 
 records of the dataset.
 
-```{r weekday, echo=FALSE}
+```{r weekday, echo=TRUE}
 weekend <- weekdays(filledactivity$date, abbreviate=TRUE) %in% c("Sat","Sun")
 filledactivity[weekend, "week"] <- "weekend"
 filledactivity[!weekend, "week"] <- "weekday"
@@ -117,7 +117,7 @@ head(filledactivity)
 The following shows the panel plot of the 5-minute interval and the average 
 number of steps taken, averaged across all weekday days or weekend days.
 
-```{r weekdayplot, echo=FALSE}
+```{r weekdayplot, echo=TRUE}
 intervalweekstep <- with(filledactivity, aggregate(steps, 
                                                    by=list(interval, week), 
                                                    FUN=mean))

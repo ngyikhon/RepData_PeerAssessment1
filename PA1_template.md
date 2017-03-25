@@ -21,7 +21,18 @@ names(intervalstep) <- c("interval", "steps")
 The following shows the histogram of the average total number of steps taken 
 per day.
 
+
+```r
+hist(dailystep$steps, xlab = "No. of Steps", ylab = "Number of days",
+     main = "Histogram of no. of steps taken per day", ylim = c(0, 30))
+```
+
 ![](PA1_template_files/figure-html/histogram-1.png)<!-- -->
+
+```r
+meanstep <- round(mean(dailystep$steps, na.rm = TRUE), digits=2)
+medianstep <- round(median(dailystep$steps, na.rm = TRUE), digits=2)
+```
 
 The mean of total number of steps taken per day is 
 **10,766.19** 
@@ -33,7 +44,18 @@ and the median of total number of steps taken per day is
 The following diagram shows a line plot of the 5-minute interval (x-axis) and 
 the average number of steps taken, averaged across all days (y-axis).
 
+
+```r
+library("ggplot2")
+g <- ggplot(intervalstep, aes(interval, steps))
+g + geom_line(color="blue") + labs(x = "Interval") + labs(y = "Number of steps")
+```
+
 ![](PA1_template_files/figure-html/lineplot-1.png)<!-- -->
+
+```r
+maxstep <- subset(intervalstep, steps==max(intervalstep$steps))
+```
 
 The 5-minute interval **835**, on average across all the days 
 in the dataset, contains the maximum number of steps. The maximum number of step
@@ -94,7 +116,22 @@ values in the dataset after filling missing values.
 The following shows the histogram of the average total number of steps taken 
 per day (with missing value being filled).
 
+
+```r
+filleddailystep <- aggregate(filledactivity$steps, by=list(activity$date), 
+                             FUN=sum)
+names(filleddailystep) <- c("date", "steps")
+hist(filleddailystep$steps, xlab = "Number of steps", ylab = "Number of days",
+     main = "Histogram of no. of steps taken per day (without missing data)", 
+     ylim = c(0, 30))
+```
+
 ![](PA1_template_files/figure-html/filledhistogram-1.png)<!-- -->
+
+```r
+filledmeanstep <- round(mean(filleddailystep$steps, na.rm = TRUE), digits=2)
+filledmedianstep <- round(median(filleddailystep$steps, na.rm = TRUE), digits=2)
+```
 
 After filling the missing value, 
 the mean of total number of steps taken per day changes from 
@@ -110,6 +147,13 @@ The new factor variable **week** is created, the following shows the first 6
 records of the dataset.
 
 
+```r
+weekend <- weekdays(filledactivity$date, abbreviate=TRUE) %in% c("Sat","Sun")
+filledactivity[weekend, "week"] <- "weekend"
+filledactivity[!weekend, "week"] <- "weekday"
+head(filledactivity)
+```
+
 ```
 ##   interval       date steps    week
 ## 1        0 2012-10-01     0 weekday
@@ -122,5 +166,16 @@ records of the dataset.
 
 The following shows the panel plot of the 5-minute interval and the average 
 number of steps taken, averaged across all weekday days or weekend days.
+
+
+```r
+intervalweekstep <- with(filledactivity, aggregate(steps, 
+                                                   by=list(interval, week), 
+                                                   FUN=mean))
+names(intervalweekstep) <- c("interval", "week", "steps")
+g <- ggplot(intervalweekstep, aes(interval, steps))
+g + geom_line(color="blue") + facet_wrap(~ week, nrow=2) + labs(x = "Interval") + 
+        labs(y = "Number of steps")
+```
 
 ![](PA1_template_files/figure-html/weekdayplot-1.png)<!-- -->
